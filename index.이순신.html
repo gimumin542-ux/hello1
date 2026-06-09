@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>충무공 이순신 — 불패의 제독</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        abyss:   '#0a1628',
+        deep:    '#0e1f3d',
+        navy:    '#112244',
+        steel:   '#1e3a5f',
+        cyan:    '#00b4d8',
+        'cyan-dim': '#0077a3',
+        teal:    '#0096c7',
+        gold:    '#c9a84c',
+        'gold-pale': '#e8d5a3',
+        mist:    '#8da9c4',
+        fog:     '#b0c4d8',
+        paper:   '#e8f0f7',
+      },
+      fontFamily: {
+        serif: ['"Noto Serif KR"', 'serif'],
+        sans:  ['"Noto Sans KR"', 'sans-serif'],
+      },
+    }
+  }
+}
+</script>
+
+<style>
+  html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+  body { background: #0a1628; color: #e8f0f7; font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+
+  section { scroll-snap-align: start; }
+
+  /* ── Wave SVG bg ── */
+  .wave-bg { position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
+
+  /* ── Ship animation ── */
+  @keyframes sail {
+    0%   { transform: translateX(-180px) translateY(0px); opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { transform: translateX(calc(100vw + 180px)) translateY(-8px); opacity: 0; }
+  }
+  @keyframes wave {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,180,216,0.4); }
+    70%  { transform: scale(1);    box-shadow: 0 0 0 18px rgba(0,180,216,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,180,216,0); }
+  }
+  @keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lineGrow { from { width: 0; } to { width: 100%; } }
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .sail-ship { animation: sail 18s linear infinite; }
+  .wave-float { animation: wave 3s ease-in-out infinite; }
+  .fade-up { animation: fadeUp 0.8s ease forwards; }
+
+  .shimmer-text {
+    background: linear-gradient(90deg, #c9a84c 0%, #fffbe6 40%, #c9a84c 60%, #00b4d8 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  /* ── Stat counter ── */
+  .stat-bar-fill { transition: width 1.8s cubic-bezier(0.4,0,0.2,1); width: 0; }
+  .stat-bar-fill.active { width: var(--target); }
+
+  /* ── Nav ── */
+  .nav-dot { transition: all 0.3s; }
+  .nav-dot.active { background: #00b4d8; transform: scale(1.4); }
+
+  /* ── Timeline ── */
+  .timeline-item { opacity: 0; transform: translateX(-20px); transition: opacity 0.6s, transform 0.6s; }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+
+  /* ── Quote glitch ── */
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96%            { opacity: 0.7; }
+    98%            { opacity: 1; }
+  }
+  .flicker { animation: flicker 6s infinite; }
+
+  /* ── Turtle ship SVG ── */
+  .turtle-hover:hover { filter: drop-shadow(0 0 12px #00b4d8); transition: filter 0.3s; }
+
+  /* scroll snap child override for mobile */
+  @media (max-width: 640px) {
+    html { scroll-snap-type: none; }
+  }
+</style>
+</head>
+<body class="bg-abyss">
+
+<!-- ═══════════════════════════════════════════════
+     NAV DOTS
+════════════════════════════════════════════════ -->
+<nav class="fixed right-5 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3" aria-label="섹션 이동">
+  <button class="nav-dot w-2.5 h-2.5 rounded-full bg-mist/40 active" onclick="scrollToSection(0)" aria-label="Hero"></button>
+  <button class="nav-dot w-2.5 h-2.5 rounded-full bg-mist/40" onclick="scrollToSection(1)" aria-label="생애"></button>
+  <button class="nav-dot w-2.5 h-2.5 rounded-full bg-mist/40" onclick="scrollToSection(2)" aria-label="전략"></button>
+  <button class="nav-dot w-2.5 h-2.5 rounded-full bg-mist/40" onclick="scrollToSection(3)" aria-label="어록"></button>
+  <button class="nav-dot w-2.5 h-2.5 rounded-full bg-mist/40" onclick="scrollToSection(4)" aria-label="유산"></button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 0 · HERO
+════════════════════════════════════════════════ -->
+<section id="s0" class="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-abyss">
+
+  <!-- Gradient sky-to-sea -->
+  <div class="absolute inset-0 bg-gradient-to-b from-[#060e1c] via-[#0a1628] to-[#0e2a45] pointer-events-none"></div>
+
+  <!-- Stars -->
+  <div class="absolute inset-0 pointer-events-none" id="stars"></div>
+
+  <!-- Water surface -->
+  <div class="absolute bottom-0 left-0 right-0 h-40 pointer-events-none">
+    <svg viewBox="0 0 1440 160" preserveAspectRatio="none" class="w-full h-full opacity-60">
+      <defs>
+        <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0096c7" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#0a1628" stop-opacity="0.9"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 C360,30 720,130 1080,80 C1260,55 1350,95 1440,80 L1440,160 L0,160 Z" fill="url(#seaGrad)">
+        <animateTransform attributeName="transform" type="translate" from="0,0" to="-72,0" dur="4s" repeatCount="indefinite"/>
+      </path>
+      <path d="M0,100 C360,60 720,140 1080,100 C1260,80 1350,115 1440,100 L1440,160 L0,160 Z" fill="#0a1628" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- Sailing ship -->
+  <div class="absolute bottom-28 left-0 pointer-events-none sail-ship">
+    <svg width="160" height="80" viewBox="0 0 160 80" class="turtle-hover">
+      <!-- Hull -->
+      <ellipse cx="80" cy="65" rx="58" ry="14" fill="#1e3a5f"/>
+      <rect x="28" y="50" width="104" height="20" rx="6" fill="#1a3050"/>
+      <!-- Spike top (거북선 특징) -->
+      <rect x="22" y="52" width="116" height="4" fill="#00b4d8" opacity="0.5" rx="2"/>
+      <!-- Mast -->
+      <rect x="78" y="8" width="4" height="50" fill="#c9a84c"/>
+      <!-- Sail -->
+      <path d="M82,12 L120,28 L82,44 Z" fill="#e8f0f7" opacity="0.85"/>
+      <path d="M78,12 L40,28 L78,44 Z" fill="#b0c4d8" opacity="0.7"/>
+      <!-- Flag -->
+      <path d="M82,8 L98,14 L82,20 Z" fill="#00b4d8"/>
+      <!-- Oars -->
+      <line x1="30" y1="64" x2="10" y2="72" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+      <line x1="50" y1="66" x2="30" y2="76" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+      <line x1="110" y1="64" x2="130" y2="72" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+      <line x1="130" y1="66" x2="150" y2="76" stroke="#c9a84c" stroke-width="2" opacity="0.7"/>
+    </svg>
+  </div>
+
+  <!-- Hanja mark — vertical, right side -->
+  <div class="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-1 opacity-20 select-none pointer-events-none">
+    <span class="font-serif text-4xl text-gold leading-none">忠</span>
+    <span class="font-serif text-4xl text-gold leading-none">武</span>
+    <span class="font-serif text-4xl text-gold leading-none">公</span>
+    <div class="w-px h-16 bg-gold mt-2"></div>
+  </div>
+
+  <!-- Hero copy -->
+  <div class="relative z-10 text-center px-6 max-w-3xl fade-up">
+    <p class="text-cyan text-xs tracking-[0.4em] uppercase mb-5 font-sans font-light">Admiral · Strategist · Guardian</p>
+    <h1 class="font-serif font-black text-7xl sm:text-8xl md:text-9xl leading-none mb-3 shimmer-text">
+      이순신
+    </h1>
+    <p class="font-serif text-xl sm:text-2xl text-fog/80 mb-2 tracking-widest">忠武公</p>
+    <div class="w-20 h-px bg-gradient-to-r from-transparent via-cyan to-transparent mx-auto my-6"></div>
+    <p class="font-sans text-base sm:text-lg text-mist/90 leading-relaxed max-w-xl mx-auto">
+      23전 <span class="text-cyan font-bold">23승</span> — 단 한 번의 패배 없이<br/>
+      조선의 바다를 지킨 불패의 제독
+    </p>
+    <div class="mt-10 flex items-center justify-center gap-4">
+      <button onclick="scrollToSection(1)"
+        class="px-7 py-3 rounded-full border border-cyan/60 text-cyan text-sm font-sans font-medium tracking-wider hover:bg-cyan/10 transition-all duration-300">
+        생애 탐색
+      </button>
+      <button onclick="scrollToSection(4)"
+        class="px-7 py-3 rounded-full bg-cyan text-abyss text-sm font-sans font-bold tracking-wider hover:bg-teal transition-all duration-300">
+        유산 보기
+      </button>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-50">
+    <span class="text-xs text-mist tracking-widest font-sans">SCROLL</span>
+    <div class="w-px h-8 bg-mist/50 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-4 bg-cyan animate-bounce"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1 · 생애 타임라인
+════════════════════════════════════════════════ -->
+<section id="s1" class="relative min-h-screen bg-deep py-24 px-6 flex flex-col items-center justify-center">
+
+  <div class="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-abyss to-transparent pointer-events-none"></div>
+
+  <div class="w-full max-w-4xl">
+    <!-- Section title -->
+    <div class="mb-16 text-center">
+      <p class="text-cyan/70 text-xs tracking-[0.5em] uppercase font-sans mb-3">Biography</p>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold text-paper">생애</h2>
+      <div class="w-12 h-0.5 bg-cyan mx-auto mt-4"></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Center line -->
+      <div class="absolute left-1/2 top-0 bottom-0 w-px bg-steel -translate-x-1/2 hidden md:block"></div>
+
+      <div class="space-y-10">
+        <!-- Items -->
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2 md:text-right md:pr-10 pb-4 md:pb-0">
+            <span class="inline-block text-xs text-cyan tracking-widest font-sans mb-1">1545년</span>
+            <h3 class="font-serif text-xl font-semibold text-gold-pale">출생</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">한성부 건천동(지금의 서울 중구)에서 태어났다. 본관은 덕수 이씨, 자는 여해(汝諧). 어린 시절부터 문무를 겸비한 인물로 성장했다.</p>
+          </div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-cyan border-2 border-deep relative z-10 animate-[pulse-ring_3s_infinite]"></div>
+          </div>
+          <div class="md:w-1/2"></div>
+        </div>
+
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2"></div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-steel border-2 border-cyan/40 relative z-10"></div>
+          </div>
+          <div class="md:w-1/2 md:pl-10 pb-4 md:pb-0">
+            <span class="inline-block text-xs text-cyan tracking-widest font-sans mb-1">1576년</span>
+            <h3 class="font-serif text-xl font-semibold text-gold-pale">무과 급제</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">32세에 무과에 급제. 늦은 출발이었으나 탁월한 전략적 사고와 리더십으로 빠르게 두각을 나타냈다. 함경도 오랑캐 방비에서 첫 공훈을 세웠다.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2 md:text-right md:pr-10 pb-4 md:pb-0">
+            <span class="inline-block text-xs text-cyan tracking-widest font-sans mb-1">1591년</span>
+            <h3 class="font-serif text-xl font-semibold text-gold-pale">전라 좌수사 임명</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">정읍 현감에서 파격적으로 전라 좌수사에 임명. 왜군 침략을 예감하고 거북선을 건조하고 수군 훈련에 매진하며 전쟁에 대비했다.</p>
+          </div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-gold border-2 border-deep relative z-10"></div>
+          </div>
+          <div class="md:w-1/2"></div>
+        </div>
+
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2"></div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-steel border-2 border-gold/60 relative z-10"></div>
+          </div>
+          <div class="md:w-1/2 md:pl-10 pb-4 md:pb-0">
+            <span class="inline-block text-xs text-cyan tracking-widest font-sans mb-1">1592–1598년</span>
+            <h3 class="font-serif text-xl font-semibold text-gold-pale">임진왜란 · 정유재란</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">7년 전쟁에서 23전 23승의 불패 신화를 세웠다. 옥포, 한산도 대첩, 명량 대첩 등 역사적 승리를 이끌며 나라를 지켰다.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2 md:text-right md:pr-10 pb-4 md:pb-0">
+            <span class="inline-block text-xs text-red-400 tracking-widest font-sans mb-1">1597년</span>
+            <h3 class="font-serif text-xl font-semibold text-red-300">하옥 · 삼도수군통제사 박탈</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">모함으로 삭탈관직되어 옥에 갇혔다. 원균이 칠천량에서 대패한 후 재기용되어 13척의 배로 명량 대첩을 승리로 이끌었다.</p>
+          </div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-4 h-4 rounded-full bg-red-800 border-2 border-red-400 relative z-10"></div>
+          </div>
+          <div class="md:w-1/2"></div>
+        </div>
+
+        <div class="timeline-item md:flex md:gap-10 md:items-start">
+          <div class="md:w-1/2"></div>
+          <div class="hidden md:flex md:w-10 items-center justify-center">
+            <div class="w-5 h-5 rounded-full bg-cyan border-2 border-deep relative z-10 animate-[pulse-ring_2s_infinite]"></div>
+          </div>
+          <div class="md:w-1/2 md:pl-10">
+            <span class="inline-block text-xs text-cyan tracking-widest font-sans mb-1">1598년 11월 19일</span>
+            <h3 class="font-serif text-xl font-semibold text-cyan">노량 해전 · 전사</h3>
+            <p class="text-mist text-sm leading-relaxed mt-2">임진왜란 최후의 결전 노량 해전에서 왜군의 유탄을 맞아 전사. 마지막 숨을 거두며 남긴 말 — <em class="text-gold-pale">"나의 죽음을 적에게 알리지 말라."</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2 · 전략 & 전투 스탯
+════════════════════════════════════════════════ -->
+<section id="s2" class="relative min-h-screen bg-abyss py-24 px-6 flex flex-col items-center justify-center">
+
+  <div class="w-full max-w-5xl">
+    <div class="mb-16 text-center">
+      <p class="text-cyan/70 text-xs tracking-[0.5em] uppercase font-sans mb-3">Strategy & Battles</p>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold text-paper">전략과 전투</h2>
+      <div class="w-12 h-0.5 bg-cyan mx-auto mt-4"></div>
+    </div>
+
+    <!-- Big stats row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+      <div class="text-center p-6 rounded-2xl border border-steel/50 bg-navy/50 hover:border-cyan/50 transition-colors group">
+        <div class="font-serif text-5xl font-black text-cyan group-hover:scale-105 transition-transform" data-count="23">0</div>
+        <div class="text-xs text-mist tracking-widest mt-2 font-sans">전 승리</div>
+      </div>
+      <div class="text-center p-6 rounded-2xl border border-steel/50 bg-navy/50 hover:border-cyan/50 transition-colors group">
+        <div class="font-serif text-5xl font-black text-gold group-hover:scale-105 transition-transform" data-count="0">0</div>
+        <div class="text-xs text-mist tracking-widest mt-2 font-sans">패전</div>
+      </div>
+      <div class="text-center p-6 rounded-2xl border border-steel/50 bg-navy/50 hover:border-cyan/50 transition-colors group">
+        <div class="font-serif text-5xl font-black text-paper group-hover:scale-105 transition-transform" data-count="13">0</div>
+        <div class="text-xs text-mist tracking-widest mt-2 font-sans">명량 대첩 아군 함선</div>
+      </div>
+      <div class="text-center p-6 rounded-2xl border border-steel/50 bg-navy/50 hover:border-cyan/50 transition-colors group">
+        <div class="font-serif text-5xl font-black text-red-400 group-hover:scale-105 transition-transform" data-count="330">0</div>
+        <div class="text-xs text-mist tracking-widest mt-2 font-sans">명량 대첩 적군 함선</div>
+      </div>
+    </div>
+
+    <!-- Strategy cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+      <div class="p-7 rounded-2xl bg-gradient-to-br from-navy to-steel/30 border border-steel/60 hover:border-cyan/40 transition-all hover:-translate-y-1">
+        <div class="text-3xl mb-4">⚓</div>
+        <h3 class="font-serif text-lg font-bold text-gold-pale mb-3">학익진 전법</h3>
+        <p class="text-mist text-sm leading-relaxed">학의 날개를 펼친 형태의 포위 전술. 한산도 대첩에서 처음 사용하여 왜 함대를 반원형으로 감싸 집중포화를 가했다. 현대 해군 전술에도 영향을 준 혁신적 전법.</p>
+      </div>
+      <div class="p-7 rounded-2xl bg-gradient-to-br from-navy to-steel/30 border border-steel/60 hover:border-cyan/40 transition-all hover:-translate-y-1">
+        <div class="text-3xl mb-4">🐢</div>
+        <h3 class="font-serif text-lg font-bold text-gold-pale mb-3">거북선</h3>
+        <p class="text-mist text-sm leading-relaxed">세계 최초의 철갑 돌격선. 지붕에 철판과 칼날을 덮어 적병의 승선을 막고, 16개의 포문에서 일제 사격이 가능했다. 사천 해전에서 첫 실전 투입되어 혁혁한 전과를 올렸다.</p>
+      </div>
+      <div class="p-7 rounded-2xl bg-gradient-to-br from-navy to-steel/30 border border-steel/60 hover:border-cyan/40 transition-all hover:-translate-y-1">
+        <div class="text-3xl mb-4">🌊</div>
+        <h3 class="font-serif text-lg font-bold text-gold-pale mb-3">지형 활용</h3>
+        <p class="text-mist text-sm leading-relaxed">명량 대첩에서 울돌목(명량)의 초속 11노트 급류를 역이용. 330척의 적을 13척으로 막은 신화는 단순한 용기가 아닌 정밀한 지리 분석에서 비롯됐다.</p>
+      </div>
+    </div>
+
+    <!-- Battle stat bars -->
+    <div class="space-y-5" id="stat-bars">
+      <div>
+        <div class="flex justify-between text-xs text-mist mb-1.5 font-sans">
+          <span>한산도 대첩 격침률</span><span class="text-cyan">81%</span>
+        </div>
+        <div class="h-1.5 bg-steel/40 rounded-full overflow-hidden">
+          <div class="stat-bar-fill h-full rounded-full bg-gradient-to-r from-teal to-cyan" style="--target:81%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs text-mist mb-1.5 font-sans">
+          <span>명량 대첩 병력 열세</span><span class="text-gold">1:25 (적 대비)</span>
+        </div>
+        <div class="h-1.5 bg-steel/40 rounded-full overflow-hidden">
+          <div class="stat-bar-fill h-full rounded-full bg-gradient-to-r from-gold to-yellow-400" style="--target:96%"></div>
+        </div>
+      </div>
+      <div>
+        <div class="flex justify-between text-xs text-mist mb-1.5 font-sans">
+          <span>7년 전쟁 승률</span><span class="text-paper">100%</span>
+        </div>
+        <div class="h-1.5 bg-steel/40 rounded-full overflow-hidden">
+          <div class="stat-bar-fill h-full rounded-full bg-gradient-to-r from-paper/60 to-paper" style="--target:100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3 · 어록
+════════════════════════════════════════════════ -->
+<section id="s3" class="relative min-h-screen bg-deep py-24 px-6 flex flex-col items-center justify-center overflow-hidden">
+
+  <!-- Background hanja -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.04]">
+    <span class="font-serif text-[30vw] font-black text-paper leading-none">義</span>
+  </div>
+
+  <div class="relative w-full max-w-3xl">
+    <div class="mb-16 text-center">
+      <p class="text-cyan/70 text-xs tracking-[0.5em] uppercase font-sans mb-3">Words</p>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold text-paper">어록</h2>
+      <div class="w-12 h-0.5 bg-cyan mx-auto mt-4"></div>
+    </div>
+
+    <!-- Quote cards -->
+    <div class="space-y-8">
+      <blockquote class="relative p-8 rounded-2xl border border-cyan/20 bg-navy/40 backdrop-blur">
+        <div class="absolute -top-4 left-8 text-6xl text-cyan/20 font-serif leading-none select-none">"</div>
+        <p class="font-serif text-xl sm:text-2xl text-paper leading-relaxed flicker mb-4">
+          죽으려 하면 살고, 살려 하면 죽는다.
+        </p>
+        <p class="text-mist/60 text-xs tracking-widest font-sans">死卽生 生卽死 — 난중일기</p>
+      </blockquote>
+
+      <blockquote class="relative p-8 rounded-2xl border border-gold/20 bg-navy/40 backdrop-blur">
+        <div class="absolute -top-4 left-8 text-6xl text-gold/20 font-serif leading-none select-none">"</div>
+        <p class="font-serif text-xl sm:text-2xl text-paper leading-relaxed mb-4">
+          신에게는 아직 열두 척의 배가 남아 있습니다.
+        </p>
+        <p class="text-mist/60 text-xs tracking-widest font-sans">명량 대첩 전 선조에게 올린 장계 — 1597년</p>
+      </blockquote>
+
+      <blockquote class="relative p-8 rounded-2xl border border-mist/10 bg-navy/40 backdrop-blur">
+        <div class="absolute -top-4 left-8 text-6xl text-paper/10 font-serif leading-none select-none">"</div>
+        <p class="font-serif text-xl sm:text-2xl text-paper leading-relaxed mb-4">
+          나의 죽음을 적에게 알리지 말라.
+        </p>
+        <p class="text-mist/60 text-xs tracking-widest font-sans">노량 해전 중 전사 직전 유언 — 1598년 11월 19일</p>
+      </blockquote>
+    </div>
+
+    <!-- Diary note -->
+    <div class="mt-12 p-6 rounded-xl border border-steel/40 bg-abyss/60">
+      <p class="text-xs text-cyan tracking-widest font-sans mb-3">난중일기 (亂中日記)</p>
+      <p class="text-sm text-mist leading-relaxed">
+        7년의 전쟁 기간 동안 거의 매일 기록한 전쟁 일기. 전투 상황뿐 아니라 나라를 걱정하는 마음, 어머니를 그리는 인간적인 면모가 담겨 있다. 2013년 유네스코 세계기록유산으로 등재되었다.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4 · 유산
+════════════════════════════════════════════════ -->
+<section id="s4" class="relative min-h-screen bg-abyss py-24 px-6 flex flex-col items-center justify-center">
+
+  <div class="w-full max-w-5xl">
+    <div class="mb-16 text-center">
+      <p class="text-cyan/70 text-xs tracking-[0.5em] uppercase font-sans mb-3">Legacy</p>
+      <h2 class="font-serif text-4xl sm:text-5xl font-bold text-paper">유산</h2>
+      <div class="w-12 h-0.5 bg-cyan mx-auto mt-4"></div>
+    </div>
+
+    <!-- Legacy grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-cyan/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">🏛️</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">충무공 시호</h3>
+        <p class="text-mist text-sm leading-relaxed">사후 선조로부터 충무공(忠武公) 시호를 받았다. 나라에 충성하고 무공을 세운 공을 기려 후대에도 칭송받는 호칭이 되었다.</p>
+      </div>
+
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">💴</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">100원 동전</h3>
+        <p class="text-mist text-sm leading-relaxed">대한민국에서 유통되는 100원 동전 앞면에 이순신 장군의 초상이 새겨져 있다. 매일 수억 명의 손을 거쳐 그의 정신이 이어지고 있다.</p>
+      </div>
+
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-paper/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">🗿</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">광화문 동상</h3>
+        <p class="text-mist text-sm leading-relaxed">서울 광화문 광장 중앙에 위치한 이순신 장군 동상. 수도의 중심에서 대한민국을 수호하는 상징으로 자리한다.</p>
+      </div>
+
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-cyan/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">📖</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">유네스코 세계기록유산</h3>
+        <p class="text-mist text-sm leading-relaxed">난중일기가 2013년 유네스코 세계기록유산에 등재. 전쟁 중에도 매일 기록을 남긴 그의 성실함이 세계적으로 인정받았다.</p>
+      </div>
+
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">⚔️</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">해군 함정 명명</h3>
+        <p class="text-mist text-sm leading-relaxed">대한민국 해군의 이지스 구축함에 '이순신함'이 존재한다. 21세기에도 그의 이름이 대한민국의 바다를 지키고 있다.</p>
+      </div>
+
+      <div class="group relative overflow-hidden rounded-2xl border border-steel/50 bg-navy/50 p-7 hover:border-cyan/50 transition-all hover:-translate-y-1">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-paper/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
+        <div class="text-2xl mb-4">🌏</div>
+        <h3 class="font-serif text-base font-bold text-gold-pale mb-2">국제적 평가</h3>
+        <p class="text-mist text-sm leading-relaxed">영국의 넬슨 제독과 함께 세계 3대 해전 영웅으로 꼽힌다. 일본 해군 역사에서도 '이순신은 단 한 번도 패하지 않았다'고 기록한다.</p>
+      </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="relative overflow-hidden rounded-3xl border border-cyan/20 bg-gradient-to-br from-navy to-steel/20 p-10 text-center">
+      <div class="absolute inset-0 bg-gradient-to-br from-cyan/5 to-transparent pointer-events-none"></div>
+      <p class="font-serif text-sm text-cyan tracking-widest mb-4">1545 — 1598</p>
+      <h3 class="font-serif text-3xl sm:text-4xl font-bold text-paper mb-4">
+        바다가 기억하는 이름
+      </h3>
+      <p class="text-mist text-sm leading-relaxed max-w-lg mx-auto mb-8">
+        53년의 삶 중 7년을 전장에서 보내며 나라를 지킨 제독.<br/>
+        그는 단 한 번도 지지 않았다.
+      </p>
+      <button onclick="scrollToSection(0)"
+        class="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-cyan/50 text-cyan text-sm font-sans font-medium tracking-wider hover:bg-cyan/10 transition-all">
+        ↑ 처음으로
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-16 text-center">
+    <p class="text-mist/30 text-xs font-sans tracking-widest">충무공 이순신 · 忠武公 李舜臣</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════ -->
+<script>
+// ── Stars ──
+const starContainer = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  const size = Math.random() < 0.2 ? 2 : 1;
+  s.style.cssText = `
+    position:absolute;
+    width:${size}px;height:${size}px;
+    border-radius:50%;
+    background:#e8f0f7;
+    opacity:${(Math.random()*0.5+0.1).toFixed(2)};
+    top:${Math.random()*100}%;
+    left:${Math.random()*100}%;
+    animation: wave ${(2+Math.random()*4).toFixed(1)}s ease-in-out infinite;
+    animation-delay:${(Math.random()*4).toFixed(1)}s;
+  `;
+  starContainer.appendChild(s);
+}
+
+// ── Sections ──
+const sections = document.querySelectorAll('section');
+const navDots = document.querySelectorAll('.nav-dot');
+
+function scrollToSection(i) {
+  sections[i]?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Nav dot active state ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = [...sections].indexOf(e.target);
+      navDots.forEach((d,i) => d.classList.toggle('active', i===idx));
+    }
+  });
+}, { threshold: 0.5 });
+sections.forEach(s => observer.observe(s));
+
+// ── Timeline reveal ──
+const tlObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 120);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.timeline-item').forEach(el => tlObs.observe(el));
+
+// ── Stat bars ──
+const barObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.stat-bar-fill').forEach(b => b.classList.add('active'));
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const statSection = document.getElementById('stat-bars');
+if (statSection) barObs.observe(statSection);
+
+// ── Counter animation ──
+function animateCount(el, target, duration=1800) {
+  let start = null;
+  const step = ts => {
+    if (!start) start = ts;
+    const progress = Math.min((ts-start)/duration, 1);
+    const ease = 1 - Math.pow(1-progress, 3);
+    el.textContent = Math.round(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+const countObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('[data-count]').forEach(el => {
+        animateCount(el, parseInt(el.dataset.count));
+      });
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('#s2').forEach(s => countObs.observe(s));
+</script>
+</body>
+</html>
